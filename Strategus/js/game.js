@@ -66,11 +66,11 @@ function createIcosahedronPoints(radius) {
 
     var vertices = [];
     vertices[0] = toCart(0, theta0);
-    for (var i = 0; i < 6; ++i) {
-        vertices[1 + i] = toCart(phi1[i], theta1);
-        vertices[7 + i] = toCart(phi2[i], theta2);
+    for (var i = 1; i < 6; ++i) {
+        vertices[i] = toCart(phi1[i-1], theta1);
+        vertices[5 + i] = toCart(phi2[i-1], theta2);
     }
-    vertices[13] = toCart(0, theta4);
+    vertices[11] = toCart(0, theta4);
     return vertices;
 }
 
@@ -80,7 +80,25 @@ function createIcosahedron(vertices, scene) {
         0, 3, 2,
         0, 4, 3,
         0, 5, 4,
-        0, 1, 5
+        0, 1, 5,
+
+        1, 2, 6,
+        2, 3, 7,
+        3, 4, 8,
+        4, 5, 9,
+        5, 1, 10,
+
+        2, 7, 6,
+        3, 8, 7,
+        4, 9, 8,
+        5, 10, 9,
+        1, 6, 10,
+
+        11, 6, 7,
+        11, 7, 8,
+        11, 8, 9,
+        11, 9, 10,
+        11, 10, 6,
     ];
 
     var shape = new THREE.Geometry();
@@ -91,8 +109,7 @@ function createIcosahedron(vertices, scene) {
     for (var i = 0; i < indices.length; i += 3) {
         shape.faces.push(new THREE.Face3(indices[i], indices[i + 1], indices[i + 2]));
     }
-    //shape.faces.push(new THREE.Face3(indices[0], indices[1], indices[2]));
-
+    
     var colorCodes = [0xFF0000, 0x00FF00, 0x0000FF];
     var colors = [];
     for (var i = 0; i < colorCodes.length; ++i) {
@@ -104,10 +121,6 @@ function createIcosahedron(vertices, scene) {
             shape.faces[i].vertexColors[j] = colors[j];
         }
     }
-
-    /*for (var i = 0; i < colors.length; ++i) {
-        shape.faces[0].vertexColors[i] = new THREE.Color(colors[i]);
-    }*/
 
     var material = new THREE.MeshBasicMaterial({
         vertexColors: THREE.VertexColors,
@@ -143,13 +156,13 @@ function createGeometry(scene) {
 
     var triangleMesh = new THREE.Mesh(triangleGeometry, triangleMaterial);
     triangleMesh.position.set(-1.5, 0, 4);
-    scene.add(triangleMesh);
+    //scene.add(triangleMesh);
     return triangleMesh;
 }
 
 function animateScene() {
     mesh.rotation.y += 0.1;
-    ico.rotation.y += 0.05;
+    ico.rotation.y += 0.025;
     requestAnimationFrame(animateScene);
     renderScene(globalScene.renderer, globalScene.scene, globalScene.camera);
 }
@@ -157,4 +170,3 @@ function animateScene() {
 function renderScene(renderer, scene, camera) {
     renderer.render(scene, camera);
 }
-
