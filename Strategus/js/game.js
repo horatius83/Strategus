@@ -75,18 +75,39 @@ function createIcosahedronPoints(radius) {
 }
 
 function createIcosahedron(vertices, scene) {
-    var indices = [0, 2, 1];
+    var indices = [
+        0, 2, 1,
+        0, 3, 2,
+        0, 4, 3,
+        0, 5, 4,
+        0, 1, 5
+    ];
 
     var shape = new THREE.Geometry();
     for (var i = 0; i < vertices.length; ++i) {
         shape.vertices.push(new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z));
     }
-    shape.faces.push(new THREE.Face3(indices[0], indices[1], indices[2]));
 
-    var colors = [0xFF0000, 0x00FF00, 0x0000FF];
-    for (var i = 0; i < colors.length; ++i) {
-        shape.faces[0].vertexColors[i] = new THREE.Color(colors[i]);
+    for (var i = 0; i < indices.length; i += 3) {
+        shape.faces.push(new THREE.Face3(indices[i], indices[i + 1], indices[i + 2]));
     }
+    //shape.faces.push(new THREE.Face3(indices[0], indices[1], indices[2]));
+
+    var colorCodes = [0xFF0000, 0x00FF00, 0x0000FF];
+    var colors = [];
+    for (var i = 0; i < colorCodes.length; ++i) {
+        colors[i] = new THREE.Color(colorCodes[i]);
+    }
+
+    for (var i = 0; i < shape.faces.length; ++i) {
+        for (var j = 0; j < colors.length; ++j) {
+            shape.faces[i].vertexColors[j] = colors[j];
+        }
+    }
+
+    /*for (var i = 0; i < colors.length; ++i) {
+        shape.faces[0].vertexColors[i] = new THREE.Color(colors[i]);
+    }*/
 
     var material = new THREE.MeshBasicMaterial({
         vertexColors: THREE.VertexColors,
@@ -128,6 +149,7 @@ function createGeometry(scene) {
 
 function animateScene() {
     mesh.rotation.y += 0.1;
+    ico.rotation.y += 0.05;
     requestAnimationFrame(animateScene);
     renderScene(globalScene.renderer, globalScene.scene, globalScene.camera);
 }
